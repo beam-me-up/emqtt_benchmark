@@ -29,12 +29,14 @@ Usage: emqtt_bench_sub [--help <help>] [-h [<host>]] [-p [<port>]]
   -P, --password   password for connecting to server
   -k, --keepalive  keep alive in seconds [default: 300]
   -C, --clean      clean session [default: true]
+  -n, --node       Prefix value 
   --ifaddr         local ipaddress or interface address
 ```
 
 For example, create 50K concurrent clients at the arrival rate of 100/sec: 
 
 ```sh
+./emqtt_bench_sub -n 1 -h server -p 1883 -c 1 -i 10 -t dhinesh -q 1
 ./emqtt_bench_sub -c 50000 -i 10 -t bench/%i -q 2
 ```
 

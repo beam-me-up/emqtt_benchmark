@@ -25,6 +25,8 @@
           "keep alive in seconds"},
          {clean, $C, "clean", {boolean, true},
           "clean session"},
+         {node, $n, "node", string,
+          "nodename for connecting to server"},
          {ifaddr, undefined, "ifaddr", string,
           "local ipaddress or interface address"}
         ]).

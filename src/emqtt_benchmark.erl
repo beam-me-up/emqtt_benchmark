@@ -53,7 +53,7 @@ init() ->
 main_loop(Uptime, Count) ->
 	receive
 		{connected, _N, _Client} ->
-			io:format("conneted: ~w~n", [Count]),
+			io:format("connected: ~w~n", [Count]),
 			main_loop(Uptime, Count+1);
         stats ->
             print_stats(Uptime),
@@ -97,7 +97,7 @@ connect(Parent, N, PubSub, Opts) ->
     MqttOpts = [{client_id, ClientId} | mqtt_opts(Opts)],
     TcpOpts  = tcp_opts(Opts),
     AllOpts  = [{seq, N}, {client_id, ClientId} | Opts],
-	case emqttc:start_link(MqttOpts, TcpOpts) of
+    case emqttc:start_link(MqttOpts, TcpOpts) of
     {ok, Client} ->
         Parent ! {connected, N, Client},
         case PubSub of
@@ -166,14 +166,16 @@ tcp_opts([_|Opts], Acc) ->
 
 client_id(PubSub, N, Opts) ->
     Prefix =
-    case proplists:get_value(ifaddr, Opts) of
-        undefined ->
-            {ok, Host} = inet:gethostname(), Host;
-        IfAddr    ->
-            IfAddr
+    case proplists:get_value(node, Opts) of
+        undefined -> "1";
+        Node    -> Node
     end,
-    list_to_binary(lists:concat([Prefix, "_bench_", atom_to_list(PubSub),
-                                    "_", N, "_", random:uniform(16#FFFFFFFF)])).
+    PubSubX = case PubSub of
+            sub -> "s";
+            pub -> "p"
+    end,
+    list_to_binary(lists:concat([Prefix, "_", PubSubX,
+                                    "_", N, "_", random:uniform(16#FFFF)])).
 
 topics_opt(Opts) ->
     Topics = topics_opt(Opts, []),
